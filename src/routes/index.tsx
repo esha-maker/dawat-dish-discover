@@ -79,7 +79,7 @@ function Home() {
       toast.error("Daily free scans used up", {
         description: "Upgrade to Dawat Pro for unlimited fridge scans.",
       });
-      navigate({ to: "/pricing" });
+      navigate({ to: "/pro" });
       return;
     }
     setLoading(true);
@@ -158,7 +158,7 @@ function Home() {
                   ) : (
                     <>
                       {left ?? FREE_DAILY_SCANS} of {FREE_DAILY_SCANS} free scans left today ·{" "}
-                      <Link to="/pricing" className="font-medium text-primary underline">
+                      <Link to="/pro" className="font-medium text-primary underline">
                         Go Pro
                       </Link>
                     </>
