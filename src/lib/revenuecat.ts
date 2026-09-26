@@ -7,12 +7,12 @@ const USER_KEY = "dawat.rcUser";
 let instance: PurchasesT | null = null;
 
 export function hasRevenueCatKey() {
-  return Boolean(import.meta.env.VITE_REVENUECAT_API_KEY);
+  return Boolean(import.meta.env['VITE_REVENUECAT_API_KEY']);
 }
 
 async function getPurchases(): Promise<PurchasesT | null> {
   if (typeof window === "undefined") return null;
-  const apiKey = import.meta.env.VITE_REVENUECAT_API_KEY as string | undefined;
+  const apiKey = import.meta.env['VITE_REVENUECAT_API_KEY'] as string | undefined;
   if (!apiKey) return null;
   if (instance) return instance;
   const { Purchases } = await import("@revenuecat/purchases-js");
