@@ -176,3 +176,18 @@
   direction: rtl;
   line-height: 2.4;
 }
+
+/* Hide the "Edit with Lovable" badge */
+#lovable-badge,
+.lovable-badge,
+[data-lovable-badge],
+[data-testid="lovable-badge"],
+iframe[src*="lovable-badge"],
+a[href*="lovable.dev"][target="_blank"],
+div[id^="lovable"],
+div[class*="lovable-badge"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
