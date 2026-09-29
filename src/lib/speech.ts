@@ -4,7 +4,7 @@ const FEMALE_HINTS = ["female", "zira", "samantha", "susan", "karen", "moira", "
 
 function pickVoice(lang: "ur-PK" | "en-US"): SpeechSynthesisVoice | null {
   const voices = window.speechSynthesis.getVoices();
-  const prefix = lang.split("-")[0];
+  const prefix = lang.slice(0, 2);
   const matches = voices.filter((v) => v.lang.toLowerCase().startsWith(prefix));
   const pool = matches.length > 0 ? matches : voices.filter((v) => v.lang === "en-US");
   // Prefer a female-sounding voice when the name hints at one.
