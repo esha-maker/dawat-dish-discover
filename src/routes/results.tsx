@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Camera, Clock, Flame } from "lucide-react";
+import { Camera, Clock, Flame, Square, Volume2 } from "lucide-react";
 
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { dishImages, loadScan } from "@/lib/dawat-store";
+import { speakRecipeUrdu, stopSpeaking, warmUpVoices } from "@/lib/speech";
 import type { DawatScan } from "@/lib/dawat.functions";
 
 export const Route = createFileRoute("/results")({
@@ -28,11 +29,31 @@ export const Route = createFileRoute("/results")({
 function Results() {
   const [scan, setScan] = useState<(DawatScan & { photo?: string }) | null>(null);
   const [ready, setReady] = useState(false);
+  const [speakingId, setSpeakingId] = useState<string | null>(null);
 
   useEffect(() => {
     setScan(loadScan());
     setReady(true);
+    warmUpVoices();
   }, []);
+
+  useEffect(() => {
+    return () => stopSpeaking();
+  }, []);
+
+  function toggleSpeak(recipe: DawatScan["recipes"][number]) {
+    if (speakingId === recipe.id) {
+      stopSpeaking();
+      setSpeakingId(null);
+      return;
+    }
+    const urduText = [
+      recipe.nameUrdu,
+      ...recipe.steps.map((step) => step.ur),
+    ].join(". ");
+    const started = speakRecipeUrdu(urduText, () => setSpeakingId(null));
+    if (started) setSpeakingId(recipe.id);
+  }
 
   return (
     <div className="min-h-screen">
@@ -102,7 +123,25 @@ function Results() {
                     />
                     <div className="flex flex-1 flex-col p-5">
                       <h3 className="text-xl font-semibold">{recipe.name}</h3>
-                      <p className="urdu mt-1 text-sm text-muted-foreground">{recipe.nameUrdu}</p>
+                      <div className="mt-2 flex items-center gap-2">
+                        <p className="urdu flex-1 text-sm text-muted-foreground">{recipe.nameUrdu}</p>
+                        <button
+                          type="button"
+                          onClick={() => toggleSpeak(recipe)}
+                          aria-label={
+                            speakingId === recipe.id
+                              ? `Stop the Urdu voice for ${recipe.name}`
+                              : `Listen to ${recipe.nameUrdu} in Urdu`
+                          }
+                          className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-secondary-foreground transition-colors hover:bg-accent"
+                        >
+                          {speakingId === recipe.id ? (
+                            <Square className="size-3.5" />
+                          ) : (
+                            <Volume2 className="size-4" />
+                          )}
+                        </button>
+                      </div>
                       <p className="mt-2 flex-1 text-sm text-muted-foreground">
                         {recipe.description}
                       </p>
