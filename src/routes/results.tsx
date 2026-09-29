@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Camera, Clock, Flame } from "lucide-react";
+import { Camera, Clock, Flame, Square, Volume2 } from "lucide-react";
 
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { dishImages, loadScan } from "@/lib/dawat-store";
+import { speakRecipeUrdu, stopSpeaking, warmUpVoices } from "@/lib/speech";
 import type { DawatScan } from "@/lib/dawat.functions";
 
 export const Route = createFileRoute("/results")({
