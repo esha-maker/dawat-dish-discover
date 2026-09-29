@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Clock, Flame } from "lucide-react";
+import { ArrowLeft, Clock, Flame, Volume2, VolumeX } from "lucide-react";
 
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { dishImages, loadScan } from "@/lib/dawat-store";
+import { speakText, stopSpeaking, warmUpVoices } from "@/lib/speech";
 import type { DawatRecipe } from "@/lib/dawat.functions";
 
 export const Route = createFileRoute("/recipe/$id")({
@@ -25,16 +26,32 @@ export const Route = createFileRoute("/recipe/$id")({
   component: RecipePage,
 });
 
+type Lang = "ur" | "en";
+
 function RecipePage() {
   const { id } = useParams({ from: "/recipe/$id" });
   const [recipe, setRecipe] = useState<DawatRecipe | null>(null);
   const [ready, setReady] = useState(false);
+  const [lang, setLang] = useState<Lang>("ur");
+  const [speakingKey, setSpeakingKey] = useState<string | null>(null);
 
   useEffect(() => {
+    warmUpVoices();
     const scan = loadScan();
     setRecipe(scan?.recipes.find((r) => r.id === id) ?? null);
     setReady(true);
+    return () => stopSpeaking();
   }, [id]);
+
+  const speak = (key: string, text: string, speechLang: "ur-PK" | "en-US") => {
+    if (speakingKey === key) {
+      stopSpeaking();
+      setSpeakingKey(null);
+      return;
+    }
+    const ok = speakText(text, speechLang, () => setSpeakingKey(null));
+    setSpeakingKey(ok ? key : null);
+  };
 
   if (ready && !recipe) {
     return (
@@ -57,12 +74,40 @@ function RecipePage() {
     <div className="min-h-screen">
       <Header />
       <main className="mx-auto max-w-3xl px-5 py-8">
-        <Link
-          to="/results"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="size-4" /> Back to recipes
-        </Link>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <Link
+            to="/results"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="size-4" /> Back to recipes
+          </Link>
+
+          {/* Language toggle for the whole recipe */}
+          <div className="inline-flex rounded-full border border-border bg-card p-1 shadow-soft">
+            <button
+              type="button"
+              onClick={() => setLang("ur")}
+              className={`urdu rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
+                lang === "ur"
+                  ? "bg-gradient-fresh text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              اردو
+            </button>
+            <button
+              type="button"
+              onClick={() => setLang("en")}
+              className={`rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
+                lang === "en"
+                  ? "bg-gradient-fresh text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              English
+            </button>
+          </div>
+        </div>
 
         <img
           src={dishImages[recipe.image] ?? dishImages["karahi"]}
@@ -73,8 +118,12 @@ function RecipePage() {
         />
 
         <div className="mt-6">
-          <h1 className="text-3xl font-semibold sm:text-4xl">{recipe.name}</h1>
-          <p className="urdu mt-2 text-xl">{recipe.nameUrdu}</p>
+          <h1 className="text-3xl font-semibold sm:text-4xl">
+            {lang === "ur" ? <span className="urdu">{recipe.nameUrdu}</span> : recipe.name}
+          </h1>
+          <p className="mt-2 text-lg text-muted-foreground">
+            {lang === "ur" ? recipe.name : <span className="urdu">{recipe.nameUrdu}</span>}
+          </p>
           <p className="mt-3 text-muted-foreground">{recipe.description}</p>
           <div className="mt-4 flex items-center gap-4 text-sm font-medium text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">
@@ -112,9 +161,36 @@ function RecipePage() {
                 <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-fresh text-sm font-semibold text-primary-foreground">
                   {i + 1}
                 </span>
-                <div>
-                  <p className="text-sm">{step.en}</p>
-                  <p className="urdu mt-2 text-sm text-muted-foreground">{step.ur}</p>
+                <div className="flex-1">
+                  <p className={lang === "ur" ? "urdu text-base" : "text-sm"}>
+                    {lang === "ur" ? step.ur : step.en}
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => speak(`step-${i}-ur`, step.ur, "ur-PK")}
+                      className="urdu inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-accent"
+                    >
+                      {speakingKey === `step-${i}-ur` ? (
+                        <VolumeX className="size-3.5 text-primary" />
+                      ) : (
+                        <Volume2 className="size-3.5 text-primary" />
+                      )}
+                      اردو
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => speak(`step-${i}-en`, step.en, "en-US")}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-accent"
+                    >
+                      {speakingKey === `step-${i}-en` ? (
+                        <VolumeX className="size-3.5 text-primary" />
+                      ) : (
+                        <Volume2 className="size-3.5 text-primary" />
+                      )}
+                      English
+                    </button>
+                  </div>
                 </div>
               </li>
             ))}
