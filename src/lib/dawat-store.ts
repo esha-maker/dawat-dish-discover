@@ -3,7 +3,7 @@ import karahi from "@/assets/dish-karahi.jpg";
 import pulao from "@/assets/dish-pulao.jpg";
 import keema from "@/assets/dish-keema.jpg";
 
-export const FREE_DAILY_SCANS = 2;
+export const FREE_DAILY_SCANS = 4;
 
 const SCAN_KEY = "dawat.lastScan";
 const USAGE_KEY = "dawat.usage";
