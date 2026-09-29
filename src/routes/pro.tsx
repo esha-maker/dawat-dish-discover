@@ -1,19 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import type { Package } from "@revenuecat/purchases-js";
 import { Check, Crown, Infinity as InfinityIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
-import { FREE_DAILY_SCANS, isPro, scansUsedToday } from "@/lib/dawat-store";
-import {
-  hasRevenueCatKey,
-  loadPlans,
-  purchasePlan,
-  refreshProStatus,
-  type ProPlans,
-} from "@/lib/revenuecat";
+import { FREE_DAILY_SCANS, isPro, scansUsedToday, setPro } from "@/lib/dawat-store";
 
 export const Route = createFileRoute("/pro")({
   head: () => ({
@@ -34,12 +26,16 @@ export const Route = createFileRoute("/pro")({
 
 type Cycle = "monthly" | "yearly";
 
+// Mock Google Play billing prices (real billing API not connected yet)
+const MOCK_PLANS: Record<Cycle, { title: string; price: string; per: string; note?: string }> = {
+  monthly: { title: "Monthly", price: "Rs 499", per: "/month" },
+  yearly: { title: "Yearly", price: "Rs 4,999", per: "/year", note: "Best value" },
+};
+
 function ProPage() {
   const navigate = useNavigate();
   const [pro, setProState] = useState(false);
   const [used, setUsed] = useState(0);
-  const [plans, setPlans] = useState<ProPlans | null>(null);
-  const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<Cycle | null>(null);
 
   useEffect(() => {
@@ -49,50 +45,23 @@ function ProPage() {
     };
     sync();
     window.addEventListener("dawat:update", sync);
-    Promise.all([loadPlans(), refreshProStatus()])
-      .then(([p]) => setPlans(p))
-      .catch((e) => {
-        console.error(e);
-        toast.error("Couldn't load plans", { description: "Please try again shortly." });
-      })
-      .finally(() => setLoading(false));
     return () => window.removeEventListener("dawat:update", sync);
   }, []);
 
-  async function buy(cycle: Cycle, pkg: Package | null) {
-    if (!pkg) {
-      toast.error("This plan isn't available yet.");
-      return;
-    }
+  // Mock purchase flow — simulates Google Play billing without a real API call
+  async function buy(cycle: Cycle) {
     setBusy(cycle);
     try {
-      const ok = await purchasePlan(pkg);
-      if (ok) {
-        toast.success("Dawat Pro activated", { description: "Unlimited fridge scans unlocked." });
-        navigate({ to: "/" });
-      }
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "Purchase failed";
-      if (!/cancel/i.test(msg)) toast.error("Purchase didn't go through", { description: msg });
+      await new Promise((r) => setTimeout(r, 1200));
+      setPro(true);
+      toast.success("Dawat Pro activated", {
+        description: `Mock ${MOCK_PLANS[cycle].title} purchase — unlimited fridge scans unlocked.`,
+      });
+      navigate({ to: "/" });
     } finally {
       setBusy(null);
     }
   }
-
-  const price = (pkg: Package | null | undefined, fallback: string) =>
-    pkg?.webBillingProduct.currentPrice.formattedPrice ?? fallback;
-
-  const tiers: { cycle: Cycle; title: string; pkg: Package | null; fallback: string; per: string; note?: string }[] = [
-    { cycle: "monthly", title: "Monthly", pkg: plans?.monthly ?? null, fallback: "—", per: "/month" },
-    {
-      cycle: "yearly",
-      title: "Yearly",
-      pkg: plans?.yearly ?? null,
-      fallback: "—",
-      per: "/year",
-      note: "Best value",
-    },
-  ];
 
   return (
     <div className="min-h-screen">
@@ -136,51 +105,48 @@ function ProPage() {
               </p>
             </div>
 
-            {tiers.map((t) => (
-              <div
-                key={t.cycle}
-                className={`relative rounded-3xl bg-card p-7 ${t.note ? "border-2 border-primary shadow-lift" : "border border-border shadow-soft"}`}
-              >
-                {t.note ? (
-                  <span className="absolute top-5 right-5 rounded-full bg-gradient-fresh px-3 py-1 text-xs font-semibold text-primary-foreground">
-                    {t.note}
-                  </span>
-                ) : null}
-                <h2 className="flex items-center gap-2 text-xl font-semibold">
-                  <Crown className="size-5 text-spice" /> {t.title}
-                </h2>
-                <p className="mt-5 text-4xl font-semibold">
-                  {loading ? "…" : price(t.pkg, t.fallback)}
-                  <span className="text-base font-normal text-muted-foreground">{t.per}</span>
-                </p>
-                <ul className="mt-6 space-y-3 text-sm">
-                  {["Unlimited fridge scans", "Priority AI detection", "All recipes, Urdu + English"].map((f) => (
-                    <li key={f} className="flex gap-2">
-                      <InfinityIcon className="size-4 shrink-0 text-primary" /> {f}
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  onClick={() => void buy(t.cycle, t.pkg)}
-                  disabled={loading || busy !== null || !t.pkg}
-                  className="mt-7 w-full rounded-xl bg-gradient-fresh font-semibold"
+            {(Object.keys(MOCK_PLANS) as Cycle[]).map((cycle) => {
+              const t = MOCK_PLANS[cycle];
+              return (
+                <div
+                  key={cycle}
+                  className={`relative rounded-3xl bg-card p-7 ${t.note ? "border-2 border-primary shadow-lift" : "border border-border shadow-soft"}`}
                 >
-                  {busy === t.cycle ? "Opening checkout…" : `Go ${t.title}`}
-                </Button>
-              </div>
-            ))}
+                  {t.note ? (
+                    <span className="absolute top-5 right-5 rounded-full bg-gradient-fresh px-3 py-1 text-xs font-semibold text-primary-foreground">
+                      {t.note}
+                    </span>
+                  ) : null}
+                  <h2 className="flex items-center gap-2 text-xl font-semibold">
+                    <Crown className="size-5 text-spice" /> {t.title}
+                  </h2>
+                  <p className="mt-5 text-4xl font-semibold">
+                    {t.price}
+                    <span className="text-base font-normal text-muted-foreground">{t.per}</span>
+                  </p>
+                  <ul className="mt-6 space-y-3 text-sm">
+                    {["Unlimited fridge scans", "Priority AI detection", "All recipes, Urdu + English"].map((f) => (
+                      <li key={f} className="flex gap-2">
+                        <InfinityIcon className="size-4 shrink-0 text-primary" /> {f}
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    onClick={() => void buy(cycle)}
+                    disabled={busy !== null}
+                    className="mt-7 w-full rounded-xl bg-gradient-fresh font-semibold"
+                  >
+                    {busy === cycle ? "Opening checkout…" : `Go ${t.title}`}
+                  </Button>
+                </div>
+              );
+            })}
           </div>
         )}
 
-        {!hasRevenueCatKey() ? (
-          <p className="mt-8 text-center text-sm text-destructive">
-            Payments aren&apos;t connected yet — add your RevenueCat key to enable checkout.
-          </p>
-        ) : (
-          <p className="mt-8 text-center text-xs text-muted-foreground">
-            Secure checkout by RevenueCat. Cancel anytime.
-          </p>
-        )}
+        <p className="mt-8 text-center text-xs text-muted-foreground">
+          Google Play billing (demo mode) — cancel anytime.
+        </p>
       </main>
     </div>
   );
