@@ -76,8 +76,8 @@ function Home() {
   async function onFile(file: File | undefined) {
     if (!file) return;
     if (!pro && scansLeft() <= 0) {
-      toast.error("Daily free scans used up", {
-        description: "Upgrade to Dawat Pro for unlimited fridge scans.",
+      toast.error("4 of 4 free scans used today", {
+        description: "Kal phir 4 free scans milenge, ya Pro le kar unlimited banao ✨",
       });
       navigate({ to: "/pro" });
       return;

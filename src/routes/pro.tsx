@@ -101,8 +101,15 @@ function ProPage() {
                 ))}
               </ul>
               <p className="mt-6 text-xs text-muted-foreground">
-                {used} of {FREE_DAILY_SCANS} scans used today
+                {used >= FREE_DAILY_SCANS
+                  ? "4 of 4 free scans used today"
+                  : `${used} of ${FREE_DAILY_SCANS} free scans used today`}
               </p>
+              {used >= FREE_DAILY_SCANS ? (
+                <p className="mt-2 rounded-xl bg-primary/10 px-3 py-2 text-xs font-medium text-primary">
+                  Kal phir 4 free scans milenge, ya Pro le kar unlimited banao ✨
+                </p>
+              ) : null}
             </div>
 
             {(Object.keys(MOCK_PLANS) as Cycle[]).map((cycle) => {
