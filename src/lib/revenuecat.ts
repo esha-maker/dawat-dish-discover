@@ -60,3 +60,13 @@ export async function purchasePlan(rcPackage: Package): Promise<boolean> {
   setPro(active);
   return active;
 }
+
+/** Show the RevenueCat paywall (current offering) as a full-screen overlay. */
+export async function showPaywall(): Promise<boolean> {
+  const p = await getPurchases();
+  if (!p) throw new Error("Payments are not configured yet.");
+  const result = await p.presentPaywall({});
+  const active = PRO_ENTITLEMENT in result.customerInfo.entitlements.active;
+  setPro(active);
+  return active;
+}
