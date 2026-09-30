@@ -1,0 +1,23 @@
+{
+  "id": "/",
+  "name": "Dawat AI - Fridge to Palate",
+  "short_name": "Dawat AI",
+  "description": "Turn ingredients into delicious recipes with AI-powered suggestions",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ff5a5f",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/placeholder.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
