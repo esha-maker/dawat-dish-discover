@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { showPaywall } from "@/lib/revenuecat";
-import { FREE_DAILY_SCANS, isPro, scansUsedToday, setPro } from "@/lib/dawat-store";
+import { FREE_DAILY_SCANS, isPro, scansUsedToday } from "@/lib/dawat-store";
 
 export const Route = createFileRoute("/pro")({
   head: () => ({
