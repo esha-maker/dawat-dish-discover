@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
+import { showPaywall } from "@/lib/revenuecat";
 import { FREE_DAILY_SCANS, isPro, scansUsedToday, setPro } from "@/lib/dawat-store";
 
 export const Route = createFileRoute("/pro")({
@@ -26,7 +27,7 @@ export const Route = createFileRoute("/pro")({
 
 type Cycle = "monthly" | "yearly";
 
-// Mock Google Play billing prices (real billing API not connected yet)
+// Display prices; actual plans come from your RevenueCat paywall
 const MOCK_PLANS: Record<Cycle, { title: string; price: string; per: string; note?: string }> = {
   monthly: { title: "Monthly", price: "Rs 499", per: "/month" },
   yearly: { title: "Yearly", price: "Rs 4,999", per: "/year", note: "Best value" },
@@ -48,16 +49,17 @@ function ProPage() {
     return () => window.removeEventListener("dawat:update", sync);
   }, []);
 
-  // Mock purchase flow — simulates Google Play billing without a real API call
   async function buy(cycle: Cycle) {
     setBusy(cycle);
     try {
-      await new Promise((r) => setTimeout(r, 1200));
-      setPro(true);
-      toast.success("Dawat Pro activated", {
-        description: `Mock ${MOCK_PLANS[cycle].title} purchase — unlimited fridge scans unlocked.`,
-      });
-      navigate({ to: "/" });
+      const active = await showPaywall();
+      if (active) {
+        toast.success("Dawat Pro activated", { description: "Unlimited fridge scans unlocked." });
+        navigate({ to: "/" });
+      }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "";
+      if (!/cancel/i.test(msg)) toast.error("Checkout failed", { description: msg || "Please try again." });
     } finally {
       setBusy(null);
     }
@@ -152,7 +154,7 @@ function ProPage() {
         )}
 
         <p className="mt-8 text-center text-xs text-muted-foreground">
-          Google Play billing (demo mode) — cancel anytime.
+          Secure checkout by RevenueCat — cancel anytime.
         </p>
       </main>
     </div>
