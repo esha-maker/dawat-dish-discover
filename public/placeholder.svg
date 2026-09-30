@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#16a34a"/>
+  <g fill="#ffffff">
+    <!-- fridge outline -->
+    <rect x="166" y="106" width="180" height="300" rx="28" fill="none" stroke="#ffffff" stroke-width="18"/>
+    <line x1="166" y1="216" x2="346" y2="216" stroke="#ffffff" stroke-width="18"/>
+    <line x1="316" y1="146" x2="316" y2="180" stroke="#ffffff" stroke-width="18" stroke-linecap="round"/>
+    <line x1="316" y1="246" x2="316" y2="300" stroke="#ffffff" stroke-width="18" stroke-linecap="round"/>
+    <!-- sparkle -->
+    <path d="M368 96 l12 30 30 12 -30 12 -12 30 -12 -30 -30 -12 30 -12 z"/>
+  </g>
+</svg>
