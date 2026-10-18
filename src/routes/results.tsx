@@ -146,6 +146,17 @@ function Results() {
             </section>
 
             <section className="mt-12">
+              <button
+                type="button"
+                onClick={openAlexa}
+                className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-alexa px-6 py-5 text-lg font-semibold text-alexa-foreground shadow-lift transition-transform hover:scale-[1.01] active:scale-[0.99]"
+              >
+                <Mic className="size-6 transition-transform group-hover:scale-110" />
+                <span>🎤 Ask Alexa to Speak This Recipe</span>
+              </button>
+            </section>
+
+            <section className="mt-12">
               <h2 className="text-2xl font-semibold">Aaj kya banayein?</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 Three Pakistani dishes from what you already have.
