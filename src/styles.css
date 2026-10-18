@@ -36,6 +36,8 @@
   --color-spice-foreground: var(--spice-foreground);
   --color-leaf: var(--leaf);
   --color-cream: var(--cream);
+  --color-alexa: var(--alexa);
+  --color-alexa-foreground: var(--alexa-foreground);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -79,6 +81,8 @@
   --spice-foreground: oklch(0.22 0.05 60);
   --leaf: oklch(0.72 0.17 145);
   --cream: oklch(0.98 0.02 95);
+  --alexa: oklch(0.45 0.19 292);
+  --alexa-foreground: oklch(0.98 0.02 300);
   --chart-1: oklch(0.55 0.15 152);
   --chart-2: oklch(0.72 0.17 145);
   --chart-3: oklch(0.7 0.16 62);
@@ -157,6 +161,10 @@
 
 @utility bg-gradient-fresh {
   background-image: var(--gradient-fresh);
+}
+
+@utility bg-gradient-alexa {
+  background-image: linear-gradient(135deg, oklch(0.42 0.17 292), oklch(0.55 0.2 282));
 }
 
 @utility bg-glow {
