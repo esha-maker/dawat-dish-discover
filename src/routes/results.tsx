@@ -220,9 +220,124 @@ function Results() {
                 ))}
               </div>
             </section>
+
+            <section className="mt-12 rounded-3xl border border-border bg-card p-8 text-center shadow-soft">
+              <h2 className="text-2xl font-semibold">Works with Amazon Devices</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Dawat AI runs on Alexa+ — your recipes, spoken aloud on every Alexa device.
+              </p>
+              <div className="mt-6 flex flex-wrap items-start justify-center gap-4">
+                <div className="flex w-28 flex-col items-center gap-2 rounded-2xl border border-border bg-secondary p-4">
+                  <span className="flex size-12 items-center justify-center rounded-full bg-gradient-alexa text-alexa-foreground">
+                    <Mic className="size-6" />
+                  </span>
+                  <span className="text-sm font-semibold">Alexa</span>
+                </div>
+                <div className="flex w-28 flex-col items-center gap-2 rounded-2xl border border-border bg-secondary p-4">
+                  <span className="flex size-12 items-center justify-center rounded-full bg-gradient-alexa text-alexa-foreground">
+                    <Tv className="size-6" />
+                  </span>
+                  <span className="text-sm font-semibold">Fire TV</span>
+                </div>
+                <div className="flex w-28 flex-col items-center gap-2 rounded-2xl border border-border bg-secondary p-4">
+                  <span className="flex size-12 items-center justify-center rounded-full bg-gradient-alexa text-alexa-foreground">
+                    <MonitorSpeaker className="size-6" />
+                  </span>
+                  <span className="text-sm font-semibold">Echo Show</span>
+                </div>
+              </div>
+              <p className="mt-6 text-base font-medium">
+                Say:{" "}
+                <span className="rounded-full bg-secondary px-3 py-1 font-semibold text-secondary-foreground">
+                  &ldquo;Alexa, ask Dawat what&apos;s in my fridge?&rdquo;
+                </span>
+              </p>
+            </section>
           </>
         ) : null}
       </main>
+
+      <Dialog open={alexaOpen} onOpenChange={closeAlexa}>
+        <DialogContent className="rounded-3xl sm:max-w-md">
+          <DialogHeader>
+            <div className="mx-auto mb-2 flex size-14 items-center justify-center rounded-full bg-gradient-alexa text-alexa-foreground shadow-lift">
+              <Mic className="size-7" />
+            </div>
+            {alexaRecipe ? (
+              <>
+                <DialogTitle className="text-center text-xl">
+                  Alexa says: {alexaRecipe.name}
+                </DialogTitle>
+                <DialogDescription asChild>
+                  <p className="urdu text-center text-base">{alexaRecipe.nameUrdu}</p>
+                </DialogDescription>
+                <p className="text-center text-xs font-medium text-muted-foreground">
+                  This is Dawat AI on Alexa+
+                </p>
+                <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-center">
+                  <Button
+                    type="button"
+                    onClick={() => alexaSpeak("ur")}
+                    className="rounded-xl bg-gradient-alexa font-semibold text-alexa-foreground"
+                  >
+                    {alexaLang === "ur" ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
+                    اردو میں سنو
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => alexaSpeak("en")}
+                    className="rounded-xl bg-gradient-alexa font-semibold text-alexa-foreground"
+                  >
+                    {alexaLang === "en" ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
+                    Speak in English
+                  </Button>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    stopSpeaking();
+                    setAlexaRecipe(null);
+                    setAlexaLang(null);
+                  }}
+                  className="mx-auto mt-3 text-xs font-medium text-muted-foreground underline-offset-2 hover:underline"
+                >
+                  Choose a different recipe
+                </button>
+              </>
+            ) : (
+              <>
+                <DialogTitle className="text-center text-xl">Alexa is listening…</DialogTitle>
+                <DialogDescription className="text-center">
+                  Which recipe should Alexa read aloud?
+                </DialogDescription>
+                <div className="mt-2 flex flex-col gap-2">
+                  {scan?.recipes.map((recipe) => (
+                    <button
+                      key={recipe.id}
+                      type="button"
+                      onClick={() => pickAlexaRecipe(recipe)}
+                      className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3 text-left transition-colors hover:bg-accent"
+                    >
+                      <img
+                        src={dishImages[recipe.image] ?? dishImages["karahi"]}
+                        alt=""
+                        className="size-12 rounded-xl object-cover"
+                      />
+                      <span className="flex-1">
+                        <span className="block text-sm font-semibold">{recipe.name}</span>
+                        <span className="urdu block text-xs text-muted-foreground">
+                          {recipe.nameUrdu}
+                        </span>
+                      </span>
+                      <Volume2 className="size-4 text-primary" />
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
