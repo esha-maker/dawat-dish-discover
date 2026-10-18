@@ -37,6 +37,9 @@ function Results() {
   const [scan, setScan] = useState<(DawatScan & { photo?: string }) | null>(null);
   const [ready, setReady] = useState(false);
   const [speakingId, setSpeakingId] = useState<string | null>(null);
+  const [alexaOpen, setAlexaOpen] = useState(false);
+  const [alexaRecipe, setAlexaRecipe] = useState<DawatScan["recipes"][number] | null>(null);
+  const [alexaLang, setAlexaLang] = useState<"ur" | "en" | null>(null);
 
   useEffect(() => {
     setScan(loadScan());
