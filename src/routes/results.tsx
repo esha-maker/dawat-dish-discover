@@ -65,6 +65,39 @@ function Results() {
     if (started) setSpeakingId(recipe.id);
   }
 
+  function openAlexa() {
+    setAlexaRecipe(null);
+    setAlexaLang(null);
+    setAlexaOpen(true);
+  }
+
+  function closeAlexa(open: boolean) {
+    setAlexaOpen(open);
+    if (!open) {
+      stopSpeaking();
+      setAlexaLang(null);
+    }
+  }
+
+  function pickAlexaRecipe(recipe: DawatScan["recipes"][number]) {
+    setAlexaRecipe(recipe);
+    setAlexaLang(null);
+    // Simulated Alexa intro line.
+    speakText("This is Dawat AI on Alexa plus. Alexa says, " + recipe.name, "en-US");
+  }
+
+  function alexaSpeak(lang: "ur" | "en") {
+    if (!alexaRecipe) return;
+    stopSpeaking();
+    setAlexaLang(lang);
+    const text =
+      lang === "ur"
+        ? [alexaRecipe.nameUrdu, ...alexaRecipe.steps.map((s) => s.ur)].join(". ")
+        : [alexaRecipe.name, ...alexaRecipe.steps.map((s) => s.en)].join(". ");
+    const started = speakText(text, lang === "ur" ? "ur-PK" : "en-US", () => setAlexaLang(null));
+    if (!started) setAlexaLang(null);
+  }
+
   return (
     <div className="min-h-screen">
       <Header />
