@@ -18,7 +18,10 @@ Snap a photo of your fridge or leftovers, and Dawat AI detects the ingredients a
 - 🇵🇰 Bilingual recipes — Urdu + English ingredients and steps
 - 💳 Pro subscription via RevenueCat (Monthly & Yearly plans, free tier: 2 scans/day)
 - 📱 Responsive, modern green-and-white fresh food theme
-
+## Made for Chakwal 🇵🇰
+- Works offline (cached recipes)
+- Dawat size: 2/4/6/8 persons
+- Cost in PKR
 ## Tech stack
 
 - [TanStack Start](https://tanstack.com/start) (React 19, server functions)
