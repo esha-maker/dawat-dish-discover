@@ -1,0 +1,4 @@
+- Add offline-capable PWA caching and local food/ingredient recognition with recipe fallback.
+- Add 2–8 serving controls with proportional ingredient quantities.
+- Add Urdu narration for the complete recipe using browser speech synthesis.
+- Show the requested green offline badge and verify the app's core offline-ready paths.
