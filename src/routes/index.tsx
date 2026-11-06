@@ -52,7 +52,8 @@ async function shrink(dataUrl: string): Promise<string> {
     };
     img.onerror = () => resolve(dataUrl);
     img.src = dataUrl;
-  });
+  });const [isOffline, setIsOffline] = useState(!navigator.onLine);
+const [persons, setPersons] = useState(4);
 }
 
 function Home() {
@@ -67,10 +68,19 @@ function Home() {
     const sync = () => {
       setLeft(scansLeft());
       setProState(isPro());
-    };
+    };window.addEventListener("email-update"...
     sync();
     window.addEventListener("dawat:update", sync);
-    return () => window.removeEventListener("dawat:update", sync);
+    return () => window.removeEventListener("dawat:update", sync);useEffect(() => {
+  const goOff = () => setIsOffline(true);
+  const goOn = () => setIsOffline(false);
+  window.addEventListener('offline', goOff);
+  window.addEventListener('online', goOn);
+  return () => {
+    window.removeEventListener('offline', goOff);
+    window.removeEventListener('online', goOn);
+  };
+}, []);
   }, []);
 
   async function onFile(file: File | undefined) {
@@ -107,7 +117,20 @@ function Home() {
   return (
     <div className="min-h-screen">
       <Header />
-      <main className="relative overflow-hidden">
+      <main className="relative overflow-hidden">{isOffline && (
+  <div className="bg-green-600 text-white text-center py-2 rounded-full mx-4 mt-2 text-sm font-bold">
+    ✅ Works in Chakwal - Offline Mode
+  </div>
+)}
+<div className="flex gap-2 justify-center items-center mt-3 bg-orange-50 p-2 rounded-xl mx-4">
+  <label className="text-sm">Dawat kitne log?</label>
+  <select value={persons} onChange={(e) => setPersons(Number(e.target.value))} className="border rounded px-2 py-1">
+    <option value={2}>2 log</option>
+    <option value={4}>4 log</option>
+    <option value={6}>6 log</option>
+    <option value={8}>8 log</option>
+  </select>
+</div>
         <div className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-glow" />
         <section className="relative mx-auto max-w-5xl px-5 pt-12 pb-16 sm:pt-20">
           <div className="grid items-center gap-10 md:grid-cols-2">
