@@ -4,11 +4,11 @@ Snap a photo of your fridge or leftovers, and Dawat AI detects the ingredients a
 
 ## How it works
 
-1. **Snap Your Fridge** — take or upload a photo from the home screen.
-2. **Ingredient detection** — the AI lists what it sees (e.g. "Chicken, Rice, Tomato, Yogurt").
-3. **Recipe suggestions** — 3 recipe cards with cook time and a **Banao** button.
-4. **Full recipe** — ingredients and step-by-step instructions in Urdu (نستعلیق script) and English.
-5. **Go Pro** — free users get **2 scans per day**; Pro unlocks unlimited scans, priority AI detection, and all recipes.
+ **Snap Your Fridge** — take or upload a photo from the home screen.
+ **Ingredient detection** — the AI lists what it sees (e.g. "Chicken, Rice, Tomato, Yogurt").
+ **Recipe suggestions** — 3 recipe cards with cook time and a **Banao** button.
+ **Full recipe** — ingredients and step-by-step instructions in Urdu (نستعلیق script) and English.
+ **Go Pro** — free users get **2 scans per day**; Pro unlocks unlimited scans, priority AI detection, and all recipes.
 
 ## Features
 
